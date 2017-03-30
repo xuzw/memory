@@ -95,6 +95,23 @@ public class MemoryRepository {
         return lastIntoPlace == null ? unknow_place : lastIntoPlace.get("target").getValue();
     }
 
+    public Memory getIfAlreadyOver(int index) {
+        for (Memory memory : memories) {
+            MemoryType memoryType = MemoryType.parse(memory.getType());
+            if (MemoryType.activity_over == memoryType) {
+                DynamicObject ext = MemoryType.activity_over.newExtDynamicObject().set(memory.getRaw());
+                if (ext.get("index").getInt() == index) {
+                    return memory;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isAlreadyOver(int index) {
+        return getIfAlreadyOver(index) != null;
+    }
+
     public static class MemoryWrapper {
         private Memory memory;
         private int index;

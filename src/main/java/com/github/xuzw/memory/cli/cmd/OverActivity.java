@@ -14,10 +14,12 @@ import com.github.xuzw.memory.utils.DynamicObject;
 
 /**
  * @author 徐泽威 xuzewei_2012@126.com
- * @time 2017年3月29日 下午11:02:35
+ * @time 2017年3月30日 上午11:43:50
  */
-public class Append {
-    private String _format(MemoryWrapper memoryWrapper, MemoryType memoryType, DynamicObject ext, MemoryRepository memoryRepository) {
+public class OverActivity {
+    private MemoryType memoryType = MemoryType.activity_over;
+
+    private String _format(MemoryWrapper memoryWrapper, DynamicObject ext, MemoryRepository memoryRepository) {
         int index = memoryWrapper.getIndex();
         Memory memory = memoryWrapper.getMemory();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss.SSS");
@@ -25,20 +27,23 @@ public class Append {
         String locale = memory.getLocale();
         StringBuffer sb = new StringBuffer();
         sb.append(String.format("[%d] %s %s\n", index, memoryType.getName(), ext.getRequiredFields().get(0).getValue()));
-        sb.append(ext.toJsonExceptFirstRequiredField().toJSONString());
+        List<String> raw = memoryRepository.get(ext.get("index").getInt()).getRaw();
+        sb.append(MemoryType.activity_new.newExtDynamicObject().set(raw).toJsonExceptFirstRequiredField().toJSONString());
         sb.append("\n");
         sb.append(String.format("%s %s\n", locale, time));
         return sb.toString();
     }
 
-    public void execute(MemoryType memoryType, List<String> args, MemoryRepository memoryRepository) throws IOException {
+    public void execute(List<String> args, MemoryRepository memoryRepository) throws IOException {
         DynamicObject ext = memoryType.newExtDynamicObject().set(args);
-        if (MemoryType.into_place == memoryType) {
-            String target = ext.get("target").getValue();
-            if (memoryRepository.getCurrentPlace().equals(target)) {
-                System.out.println(String.format("已进入场所 %s\n", target));
-                return;
-            }
+        int index = ext.get("index").getInt();
+        if (index >= memoryRepository.size()) {
+            System.out.println(String.format("不存在的活动 %d\n", index));
+            return;
+        }
+        if (memoryRepository.isAlreadyOver(index)) {
+            System.out.println(String.format("活动已结束 %d\n", index));
+            return;
         }
         MemoryBuilder memoryBuilder = new MemoryBuilder();
         memoryBuilder.raw(ext.getRaw());
@@ -47,6 +52,6 @@ public class Append {
         memoryBuilder.locale(memoryRepository.getCurrentPlace());
         memoryBuilder.type(memoryType);
         MemoryWrapper memoryWrapper = memoryRepository.append(memoryBuilder.build());
-        System.out.println(_format(memoryWrapper, memoryType, ext, memoryRepository));
+        System.out.println(_format(memoryWrapper, ext, memoryRepository));
     }
 }

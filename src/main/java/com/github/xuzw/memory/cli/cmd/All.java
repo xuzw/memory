@@ -12,7 +12,7 @@ import com.github.xuzw.memory.utils.DynamicObject;
  * @author 徐泽威 xuzewei_2012@126.com
  * @time 2017年3月29日 下午10:58:15
  */
-public class List {
+public class All {
     private String _format(MemoryWrapper memoryWrapper, MemoryRepository memoryRepository) {
         int index = memoryWrapper.getIndex();
         Memory memory = memoryWrapper.getMemory();

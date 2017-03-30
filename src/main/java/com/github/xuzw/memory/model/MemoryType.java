@@ -24,7 +24,7 @@ public enum MemoryType {
     activity_new("新活动", Arrays.asList("new_activity", "act", "a"), //
             new DynamicObject().requiredField(new DynamicField().name("type")) //
                     .requiredField(new DynamicField().name("target")) //
-                    .optionalField(new DynamicField().name("sources")) //
+                    .optionalField(new DynamicField().name("sources").shortName("source")) //
                     .optionalField(new DynamicField().name("effect"))),
     /**
      * 结束活动
@@ -36,7 +36,7 @@ public enum MemoryType {
      */
     into_place("进入场所", Arrays.asList("into_place", "into"), //
             new DynamicObject().requiredField(new DynamicField().name("target")) //
-                    .optionalField(new DynamicField().name("sources")) //
+                    .optionalField(new DynamicField().name("sources").shortName("source")) //
                     .optionalField(new DynamicField().name("effect")));
 
     private String name;
