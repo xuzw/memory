@@ -42,6 +42,10 @@ public class DynamicField {
         return value;
     }
 
+    public boolean isBlank() {
+        return StringUtils.isBlank(value);
+    }
+
     public int getInt() {
         return Integer.valueOf(value);
     }

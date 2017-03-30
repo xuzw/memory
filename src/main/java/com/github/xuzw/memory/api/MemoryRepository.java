@@ -87,8 +87,10 @@ public class MemoryRepository {
             MemoryType memoryType = MemoryType.parse(memory.getType());
             if (MemoryType.into_place == memoryType) {
                 DynamicObject ext = MemoryType.into_place.newExtDynamicObject().set(memory.getRaw());
-                if (ext.get("sources").getList().contains(Entities.xuzewei.getName())) {
-                    lastIntoPlace = ext;
+                for (String source : ext.get("sources").getList()) {
+                    if (Entities.xuzewei.hasName(source)) {
+                        lastIntoPlace = ext;
+                    }
                 }
             }
         }

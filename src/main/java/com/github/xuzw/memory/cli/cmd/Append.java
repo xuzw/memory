@@ -7,9 +7,11 @@ import java.util.UUID;
 
 import com.github.xuzw.memory.api.MemoryRepository;
 import com.github.xuzw.memory.api.MemoryRepository.MemoryWrapper;
+import com.github.xuzw.memory.model.Entities;
 import com.github.xuzw.memory.model.Memory;
 import com.github.xuzw.memory.model.MemoryBuilder;
 import com.github.xuzw.memory.model.MemoryType;
+import com.github.xuzw.memory.utils.DynamicField;
 import com.github.xuzw.memory.utils.DynamicObject;
 
 /**
@@ -27,16 +29,22 @@ public class Append {
         sb.append(String.format("[%d] %s %s\n", index, memoryType.getName(), ext.getRequiredFields().get(0).getValue()));
         sb.append(ext.toJsonExceptFirstRequiredField().toJSONString());
         sb.append("\n");
-        sb.append(String.format("%s %s\n", locale, time));
+        sb.append(String.format("%s %s", locale, time));
         return sb.toString();
     }
 
     public void execute(MemoryType memoryType, List<String> args, MemoryRepository memoryRepository) throws IOException {
         DynamicObject ext = memoryType.newExtDynamicObject().set(args);
+        DynamicField sources = ext.get("sources");
+        if (sources != null && sources.isBlank()) {
+            args.add("sources");
+            args.add(Entities.xuzewei.getName());
+            ext = memoryType.newExtDynamicObject().set(args);
+        }
         if (MemoryType.into_place == memoryType) {
             String target = ext.get("target").getValue();
             if (memoryRepository.getCurrentPlace().equals(target)) {
-                System.out.println(String.format("已进入场所 %s\n", target));
+                System.out.println(String.format("已进入场所 %s", target));
                 return;
             }
         }

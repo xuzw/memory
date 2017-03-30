@@ -31,12 +31,15 @@ public class All {
             sb.append(ext.toJsonExceptFirstRequiredField().toJSONString());
         }
         sb.append("\n");
-        sb.append(String.format("%s %s\n", locale, time));
+        sb.append(String.format("%s %s", locale, time));
         return sb.toString();
     }
 
     public void execute(MemoryRepository memoryRepository) {
         for (int i = 0; i < memoryRepository.size(); i++) {
+            if (i > 0) {
+                System.out.println();
+            }
             System.out.println(_format(new MemoryWrapper(memoryRepository.get(i), i), memoryRepository));
         }
     }

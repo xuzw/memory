@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.github.xuzw.memory.api.MemoryRepository;
 import com.github.xuzw.memory.api.MemoryRepositoryFileFormatException;
+import com.github.xuzw.memory.cli.cmd.Activity;
 import com.github.xuzw.memory.cli.cmd.All;
 import com.github.xuzw.memory.cli.cmd.Append;
 import com.github.xuzw.memory.cli.cmd.Help;
@@ -21,13 +22,19 @@ public class Main {
     public static void main(String[] args) throws IOException, MemoryRepositoryFileFormatException, InstantiationException, IllegalAccessException {
         MemoryRepository memoryRepository = new MemoryRepository(Config.load().getMemoryRepositoryFilePath());
         if (args.length == 0) {
-            // 预览
-            new Preview().execute(memoryRepository);
+            // 正在进行中的活动
+            new Activity().execute(memoryRepository);
             memoryRepository.close();
             return;
         }
         List<String> argList = _getArgList(args);
         String firstArg = argList.remove(0);
+        if (Preview.cmd.equalsIgnoreCase(firstArg)) {
+            // 预览
+            new Preview().execute(memoryRepository);
+            memoryRepository.close();
+            return;
+        }
         if (All.class.getSimpleName().equalsIgnoreCase(firstArg)) {
             // 查看全部
             new All().execute(memoryRepository);
@@ -36,7 +43,7 @@ public class Main {
         }
         if (Help.class.getSimpleName().equalsIgnoreCase(firstArg)) {
             // 帮助
-            new Help().execute(argList);
+            new Help().execute();
             memoryRepository.close();
             return;
         }
