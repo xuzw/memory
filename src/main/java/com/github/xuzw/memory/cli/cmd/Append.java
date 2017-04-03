@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import com.github.xuzw.memory.api.MemoryRepository;
 import com.github.xuzw.memory.api.MemoryRepository.MemoryWrapper;
-import com.github.xuzw.memory.model.Entities;
 import com.github.xuzw.memory.model.Memory;
 import com.github.xuzw.memory.model.MemoryBuilder;
 import com.github.xuzw.memory.model.MemoryType;
@@ -38,7 +37,7 @@ public class Append {
         DynamicField sources = ext.get("sources");
         if (sources != null && sources.isBlank()) {
             args.add("sources");
-            args.add(Entities.xuzewei.getName());
+            args.add(memoryRepository.getWhoEntity().getName());
             ext = memoryType.newExtDynamicObject().set(args);
         }
         if (MemoryType.into_place == memoryType) {

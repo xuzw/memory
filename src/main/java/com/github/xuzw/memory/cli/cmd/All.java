@@ -24,9 +24,9 @@ public class All {
         String locale = memory.getLocale();
         StringBuffer sb = new StringBuffer();
         sb.append(String.format("[%d] %s %s\n", index, memoryType.getName(), ext.getRequiredFields().get(0).getValue()));
-        if (MemoryType.activity_over == memoryType) {
+        if (MemoryType.over_activity == memoryType) {
             java.util.List<String> raw = memoryRepository.get(ext.get("index").getInt()).getRaw();
-            sb.append(MemoryType.activity_new.newExtDynamicObject().set(raw).toJson().toJSONString());
+            sb.append(MemoryType.new_activity.newExtDynamicObject().set(raw).toJson().toJSONString());
         } else {
             sb.append(ext.toJsonExceptFirstRequiredField().toJSONString());
         }

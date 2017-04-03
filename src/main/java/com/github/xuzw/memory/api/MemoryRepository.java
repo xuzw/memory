@@ -10,7 +10,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 
 import com.alibaba.fastjson.JSON;
-import com.github.xuzw.memory.model.Entities;
+import com.github.xuzw.entity.model.Entity;
+import com.github.xuzw.entity.model.EntityBuilder;
 import com.github.xuzw.memory.model.Memory;
 import com.github.xuzw.memory.model.MemoryType;
 import com.github.xuzw.memory.utils.DynamicObject;
@@ -20,7 +21,7 @@ import com.github.xuzw.memory.utils.DynamicObject;
  * @time 2017年3月29日 下午3:05:30
  */
 public class MemoryRepository {
-    private static final String unknow_place = "未知";
+    public static final String unknow_place = "未知";
 
     private String path;
     private FileWriterWithEncoding writer;
@@ -81,6 +82,25 @@ public class MemoryRepository {
         IOUtils.closeQuietly(reader);
     }
 
+    public Memory getWho() {
+        for (Memory memory : memories) {
+            MemoryType memoryType = MemoryType.parse(memory.getType());
+            if (MemoryType.who == memoryType) {
+                return memory;
+            }
+        }
+        return null;
+    }
+
+    public Entity getWhoEntity() {
+        Memory who = getWho();
+        if (who == null) {
+            return null;
+        }
+        DynamicObject dynamicObject = MemoryType.who.newExtDynamicObject().set(who.getRaw());
+        return new EntityBuilder().name(dynamicObject.get("name").getValue()).shortNames(dynamicObject.get("shortNames").getList()).build();
+    }
+
     public String getCurrentPlace() {
         DynamicObject lastIntoPlace = null;
         for (Memory memory : memories) {
@@ -88,7 +108,7 @@ public class MemoryRepository {
             if (MemoryType.into_place == memoryType) {
                 DynamicObject ext = MemoryType.into_place.newExtDynamicObject().set(memory.getRaw());
                 for (String source : ext.get("sources").getList()) {
-                    if (Entities.xuzewei.hasName(source)) {
+                    if (getWhoEntity().hasName(source)) {
                         lastIntoPlace = ext;
                     }
                 }
@@ -100,8 +120,8 @@ public class MemoryRepository {
     public Memory getIfAlreadyOver(int index) {
         for (Memory memory : memories) {
             MemoryType memoryType = MemoryType.parse(memory.getType());
-            if (MemoryType.activity_over == memoryType) {
-                DynamicObject ext = MemoryType.activity_over.newExtDynamicObject().set(memory.getRaw());
+            if (MemoryType.over_activity == memoryType) {
+                DynamicObject ext = MemoryType.over_activity.newExtDynamicObject().set(memory.getRaw());
                 if (ext.get("index").getInt() == index) {
                     return memory;
                 }

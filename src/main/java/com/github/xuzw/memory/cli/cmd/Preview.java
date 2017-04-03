@@ -26,7 +26,7 @@ public class Preview {
         for (int i = 0; i < memoryRepository.size(); i++) {
             Memory memory = memoryRepository.get(i);
             MemoryType memoryType = MemoryType.parse(memory.getType());
-            if (MemoryType.activity_new == memoryType) {
+            if (MemoryType.new_activity == memoryType) {
                 DynamicObject ext = memoryType.newExtDynamicObject().set(memory.getRaw());
                 ActivityBuilder activityBuilder = new ActivityBuilder();
                 activityBuilder.timestamp(memory.getTimestamp());
@@ -37,7 +37,7 @@ public class Preview {
                 activityBuilder.sources(ext.get("sources").getList());
                 activityBuilder.effect(ext.get("effect").getValue());
                 activities.put(i, activityBuilder.build());
-            } else if (MemoryType.activity_over == memoryType) {
+            } else if (MemoryType.over_activity == memoryType) {
                 DynamicObject ext = memoryType.newExtDynamicObject().set(memory.getRaw());
                 int index = ext.get("index").getInt();
                 Activity activity = activities.get(index);

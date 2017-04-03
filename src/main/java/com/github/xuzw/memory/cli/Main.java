@@ -12,6 +12,7 @@ import com.github.xuzw.memory.cli.cmd.Append;
 import com.github.xuzw.memory.cli.cmd.Help;
 import com.github.xuzw.memory.cli.cmd.OverActivity;
 import com.github.xuzw.memory.cli.cmd.Preview;
+import com.github.xuzw.memory.cli.cmd.Who;
 import com.github.xuzw.memory.model.MemoryType;
 
 /**
@@ -47,6 +48,12 @@ public class Main {
             memoryRepository.close();
             return;
         }
+        if (Who.class.getSimpleName().equalsIgnoreCase(firstArg)) {
+            // 这是谁的记忆
+            new Who().execute(argList, memoryRepository);
+            memoryRepository.close();
+            return;
+        }
         MemoryType memoryType = MemoryType.parse(firstArg);
         if (memoryType == null) {
             // 错误的参数
@@ -54,7 +61,7 @@ public class Main {
             memoryRepository.close();
             return;
         }
-        if (MemoryType.activity_over == memoryType) {
+        if (MemoryType.over_activity == memoryType) {
             // 结束活动
             new OverActivity().execute(argList, memoryRepository);
             memoryRepository.close();

@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import com.github.xuzw.memory.api.MemoryRepository;
 import com.github.xuzw.memory.api.MemoryRepository.MemoryWrapper;
-import com.github.xuzw.memory.model.Entities;
 import com.github.xuzw.memory.model.Memory;
 import com.github.xuzw.memory.model.MemoryBuilder;
 import com.github.xuzw.memory.model.MemoryType;
@@ -19,7 +18,7 @@ import com.github.xuzw.memory.utils.DynamicObject;
  * @time 2017年3月30日 上午11:43:50
  */
 public class OverActivity {
-    private MemoryType memoryType = MemoryType.activity_over;
+    private MemoryType memoryType = MemoryType.over_activity;
 
     private String _format(MemoryWrapper memoryWrapper, DynamicObject ext, MemoryRepository memoryRepository) {
         int index = memoryWrapper.getIndex();
@@ -30,7 +29,7 @@ public class OverActivity {
         StringBuffer sb = new StringBuffer();
         sb.append(String.format("[%d] %s %s\n", index, memoryType.getName(), ext.getRequiredFields().get(0).getValue()));
         List<String> raw = memoryRepository.get(ext.get("index").getInt()).getRaw();
-        sb.append(MemoryType.activity_new.newExtDynamicObject().set(raw).toJsonExceptFirstRequiredField().toJSONString());
+        sb.append(MemoryType.new_activity.newExtDynamicObject().set(raw).toJsonExceptFirstRequiredField().toJSONString());
         sb.append("\n");
         sb.append(String.format("%s %s", locale, time));
         return sb.toString();
@@ -41,7 +40,7 @@ public class OverActivity {
         DynamicField sources = ext.get("sources");
         if (sources != null && sources.isBlank()) {
             args.add("sources");
-            args.add(Entities.xuzewei.getName());
+            args.add(memoryRepository.getWhoEntity().getName());
             ext = memoryType.newExtDynamicObject().set(args);
         }
         int index = ext.get("index").getInt();
@@ -51,7 +50,7 @@ public class OverActivity {
         }
         Memory memory = memoryRepository.get(index);
         MemoryType memoryType = MemoryType.parse(memory.getType());
-        if (MemoryType.activity_new != memoryType) {
+        if (MemoryType.new_activity != memoryType) {
             System.out.println(String.format("不符合的类型 [%d] %s", index, memoryType.getName()));
             return;
         }
@@ -64,7 +63,7 @@ public class OverActivity {
         memoryBuilder.timestamp(System.currentTimeMillis());
         memoryBuilder.uuid(UUID.randomUUID().toString());
         memoryBuilder.locale(memoryRepository.getCurrentPlace());
-        memoryBuilder.type(MemoryType.activity_over);
+        memoryBuilder.type(MemoryType.over_activity);
         MemoryWrapper memoryWrapper = memoryRepository.append(memoryBuilder.build());
         System.out.println(_format(memoryWrapper, ext, memoryRepository));
     }

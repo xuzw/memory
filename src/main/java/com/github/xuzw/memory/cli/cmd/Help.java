@@ -14,5 +14,7 @@ public class Help {
         System.out.println("结束活动: memory over <序号>");
         System.out.println("进入场所: memory into <目标名> [source <源名列表>] [effect <效果>]");
         System.out.println("帮助: memory help");
+        System.out.println("查看这是谁的记忆: memory who");
+        System.out.println("设置这是谁的记忆: memory who <名称> [short <简称列表>] [prop <属性键值对>]");
     }
 }
