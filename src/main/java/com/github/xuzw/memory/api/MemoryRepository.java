@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.xuzw.entity.model.Entity;
 import com.github.xuzw.entity.model.EntityBuilder;
+import com.github.xuzw.memory.api.MemoryRepositoryFileFormat.MetadataOfNextLine;
 import com.github.xuzw.memory.model.Memory;
 import com.github.xuzw.memory.model.MemoryType;
 import com.github.xuzw.memory.utils.DynamicObject;
@@ -44,8 +47,16 @@ public class MemoryRepository {
     public MemoryWrapper append(Memory memory) throws IOException {
         MemoryWrapper memoryWrapper = new MemoryWrapper(memory, memories.size());
         memories.add(memory);
-        writer.append(JSON.toJSONString(memory) + MemoryRepositoryFileFormat.line_separator);
+        String line = JSON.toJSONString(memory);
+        StringBuffer sb = new StringBuffer();
+        sb.append(JSON.toJSONString(_buildMetadataOfNextLine(line))).append(MemoryRepositoryFileFormat.line_separator);
+        sb.append(line).append(MemoryRepositoryFileFormat.line_separator);
+        writer.append(sb.toString());
         return memoryWrapper;
+    }
+
+    private MetadataOfNextLine _buildMetadataOfNextLine(String line) {
+        return new MetadataOfNextLine(DigestUtils.md5Hex(line));
     }
 
     private void _load() throws IOException, MemoryRepositoryFileFormatException {
@@ -61,7 +72,20 @@ public class MemoryRepository {
         if (line == null) {
             return null;
         }
+        JSONObject json = JSON.parseObject(line);
+        if (json.getString("type").equals(MetadataOfNextLine.type_value)) {
+            MetadataOfNextLine metadataOfNextLine = JSON.toJavaObject(json, MetadataOfNextLine.class);
+            String nextLine = bReader.readLine();
+            if (!_isValidSign(metadataOfNextLine.getSign(), nextLine)) {
+                throw new MemoryRepositoryFileFormatException("invalid sign");
+            }
+            return JSONObject.parseObject(nextLine, Memory.class);
+        }
         return JSON.parseObject(line, Memory.class);
+    }
+
+    private static boolean _isValidSign(String sign, String line) {
+        return sign.equals(DigestUtils.md5Hex(line));
     }
 
     public List<Memory> getMemories() {
