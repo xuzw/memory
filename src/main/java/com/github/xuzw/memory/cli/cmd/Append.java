@@ -32,13 +32,18 @@ public class Append {
         return sb.toString();
     }
 
-    public void execute(MemoryType memoryType, List<String> args, MemoryRepository memoryRepository) throws IOException {
-        DynamicObject ext = memoryType.newExtDynamicObject().set(args);
+    public void execute(String firstArg, List<String> args, MemoryRepository memoryRepository) throws IOException {
+        MemoryType memoryType = MemoryType.parse(firstArg);
+        if (memoryType == null) {
+            System.out.println(String.format("不存在的记忆类型 %s\n", firstArg));
+            return;
+        }
+        DynamicObject ext = memoryType.newExtDynamicObject().setRaw(args);
         DynamicField sources = ext.get("sources");
         if (sources != null && sources.isBlank()) {
             args.add("sources");
             args.add(memoryRepository.getWhoEntity().getName());
-            ext = memoryType.newExtDynamicObject().set(args);
+            ext = memoryType.newExtDynamicObject().setRaw(args);
         }
         if (MemoryType.into_place == memoryType) {
             String target = ext.get("target").getValue();

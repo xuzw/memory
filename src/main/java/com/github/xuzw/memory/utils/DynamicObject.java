@@ -38,7 +38,7 @@ public class DynamicObject {
         return this;
     }
 
-    public DynamicObject set(List<String> raw) {
+    public DynamicObject setRaw(List<String> raw) {
         this.raw = new ArrayList<>(raw);
         List<String> copy = new ArrayList<>(raw);
         for (DynamicField requiredField : requiredFields) {

@@ -20,6 +20,7 @@ import com.github.xuzw.memory.utils.DynamicObject;
  * @time 2017年4月3日 下午12:59:44
  */
 public class Who {
+    public static final String cmd = "who";
     private MemoryType memoryType = MemoryType.who;
 
     private void _query(MemoryRepository memoryRepository) {
@@ -38,7 +39,7 @@ public class Who {
     }
 
     private void _set(List<String> args, MemoryRepository memoryRepository) throws IOException {
-        DynamicObject ext = memoryType.newExtDynamicObject().set(args);
+        DynamicObject ext = memoryType.newExtDynamicObject().setRaw(args);
         MemoryBuilder memoryBuilder = new MemoryBuilder();
         memoryBuilder.raw(ext.getRaw());
         memoryBuilder.timestamp(System.currentTimeMillis());

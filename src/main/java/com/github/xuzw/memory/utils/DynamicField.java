@@ -52,9 +52,11 @@ public class DynamicField {
 
     public List<String> getList() {
         List<String> list = new ArrayList<>();
-        for (String part : value.split(",")) {
-            if (StringUtils.isNotBlank(part)) {
-                list.add(part);
+        if (!isBlank()) {
+            for (String part : value.split(",")) {
+                if (StringUtils.isNotBlank(part)) {
+                    list.add(part);
+                }
             }
         }
         return list;

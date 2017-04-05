@@ -1,81 +1,53 @@
 package com.github.xuzw.memory.cli;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.xuzw.memory.api.MemoryRepository;
 import com.github.xuzw.memory.api.MemoryRepositoryFileFormatException;
-import com.github.xuzw.memory.cli.cmd.Activity;
-import com.github.xuzw.memory.cli.cmd.All;
+import com.github.xuzw.memory.cli.cmd.UnfinishedActivity;
+import com.github.xuzw.memory.cli.cmd.AllMemories;
 import com.github.xuzw.memory.cli.cmd.Append;
 import com.github.xuzw.memory.cli.cmd.Help;
+import com.github.xuzw.memory.cli.cmd.AppendOldActivity;
 import com.github.xuzw.memory.cli.cmd.OverActivity;
 import com.github.xuzw.memory.cli.cmd.Preview;
 import com.github.xuzw.memory.cli.cmd.Version;
 import com.github.xuzw.memory.cli.cmd.Who;
-import com.github.xuzw.memory.model.MemoryType;
 
 /**
  * @author 徐泽威 xuzewei_2012@126.com
  * @time 2017年3月29日 下午4:08:06
  */
 public class Main {
-    public static void main(String[] args) throws IOException, MemoryRepositoryFileFormatException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws IOException, MemoryRepositoryFileFormatException, InstantiationException, IllegalAccessException, ParseException {
         MemoryRepository memoryRepository = new MemoryRepository(Config.load().getMemoryRepositoryFilePath());
         if (args.length == 0) {
-            // 正在进行中的活动
-            new Activity().execute(memoryRepository);
+            new UnfinishedActivity().execute(memoryRepository);
             memoryRepository.close();
             return;
         }
         List<String> argList = _getArgList(args);
         String firstArg = argList.remove(0);
         if (Preview.cmd.equalsIgnoreCase(firstArg)) {
-            // 预览
             new Preview().execute(memoryRepository);
-            memoryRepository.close();
-            return;
-        }
-        if (All.class.getSimpleName().equalsIgnoreCase(firstArg)) {
-            // 查看全部
-            new All().execute(memoryRepository);
-            memoryRepository.close();
-            return;
-        }
-        if (Help.class.getSimpleName().equalsIgnoreCase(firstArg)) {
-            // 帮助
-            new Help().execute();
-            memoryRepository.close();
-            return;
-        }
-        if (Who.class.getSimpleName().equalsIgnoreCase(firstArg)) {
-            // 这是谁的记忆
-            new Who().execute(argList, memoryRepository);
-            memoryRepository.close();
-            return;
-        }
-        if (Version.class.getSimpleName().equalsIgnoreCase(firstArg)) {
-            // 版本
+        } else if (AllMemories.cmd.equalsIgnoreCase(firstArg)) {
+            new AllMemories().execute(memoryRepository);
+        } else if (Version.cmd.equalsIgnoreCase(firstArg)) {
             new Version().execute();
-            memoryRepository.close();
-            return;
-        }
-        MemoryType memoryType = MemoryType.parse(firstArg);
-        if (memoryType == null) {
-            // 错误的参数
-            System.out.println(String.format("不存在的记忆类型 %s\n", firstArg));
-            memoryRepository.close();
-            return;
-        }
-        if (MemoryType.over_activity == memoryType) {
-            // 结束活动
+        } else if (Help.cmd.equalsIgnoreCase(firstArg)) {
+            new Help().execute();
+        } else if (Who.cmd.equalsIgnoreCase(firstArg)) {
+            new Who().execute(argList, memoryRepository);
+        } else if (AppendOldActivity.cmd.equalsIgnoreCase(firstArg)) {
+            new AppendOldActivity().execute(firstArg, argList, memoryRepository);
+        } else if (OverActivity.cmd.equalsIgnoreCase(firstArg)) {
             new OverActivity().execute(argList, memoryRepository);
-            memoryRepository.close();
-            return;
+        } else {
+            new Append().execute(firstArg, argList, memoryRepository);
         }
-        // 其它类型
-        new Append().execute(memoryType, argList, memoryRepository);
         memoryRepository.close();
     }
 

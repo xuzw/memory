@@ -18,6 +18,7 @@ import com.github.xuzw.memory.utils.DynamicObject;
  * @time 2017年3月30日 上午11:43:50
  */
 public class OverActivity {
+    public static final String cmd = "over";
     private MemoryType memoryType = MemoryType.over_activity;
 
     private String _format(MemoryWrapper memoryWrapper, DynamicObject ext, MemoryRepository memoryRepository) {
@@ -29,19 +30,19 @@ public class OverActivity {
         StringBuffer sb = new StringBuffer();
         sb.append(String.format("[%d] %s %s\n", index, memoryType.getName(), ext.getRequiredFields().get(0).getValue()));
         List<String> raw = memoryRepository.get(ext.get("index").getInt()).getRaw();
-        sb.append(MemoryType.new_activity.newExtDynamicObject().set(raw).toJsonExceptFirstRequiredField().toJSONString());
+        sb.append(MemoryType.new_activity.newExtDynamicObject().setRaw(raw).toJsonExceptFirstRequiredField().toJSONString());
         sb.append("\n");
         sb.append(String.format("%s %s", locale, time));
         return sb.toString();
     }
 
     public void execute(List<String> args, MemoryRepository memoryRepository) throws IOException {
-        DynamicObject ext = memoryType.newExtDynamicObject().set(args);
+        DynamicObject ext = memoryType.newExtDynamicObject().setRaw(args);
         DynamicField sources = ext.get("sources");
         if (sources != null && sources.isBlank()) {
             args.add("sources");
             args.add(memoryRepository.getWhoEntity().getName());
-            ext = memoryType.newExtDynamicObject().set(args);
+            ext = memoryType.newExtDynamicObject().setRaw(args);
         }
         int index = ext.get("index").getInt();
         if (index >= memoryRepository.size()) {

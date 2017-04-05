@@ -27,7 +27,7 @@ public class Preview {
             Memory memory = memoryRepository.get(i);
             MemoryType memoryType = MemoryType.parse(memory.getType());
             if (MemoryType.new_activity == memoryType) {
-                DynamicObject ext = memoryType.newExtDynamicObject().set(memory.getRaw());
+                DynamicObject ext = memoryType.newExtDynamicObject().setRaw(memory.getRaw());
                 ActivityBuilder activityBuilder = new ActivityBuilder();
                 activityBuilder.timestamp(memory.getTimestamp());
                 activityBuilder.uuid(memory.getUuid());
@@ -38,12 +38,12 @@ public class Preview {
                 activityBuilder.effect(ext.get("effect").getValue());
                 activities.put(i, activityBuilder.build());
             } else if (MemoryType.over_activity == memoryType) {
-                DynamicObject ext = memoryType.newExtDynamicObject().set(memory.getRaw());
+                DynamicObject ext = memoryType.newExtDynamicObject().setRaw(memory.getRaw());
                 int index = ext.get("index").getInt();
                 Activity activity = activities.get(index);
                 activity.setDur(memory.getTimestamp() - activity.getTimestamp());
             } else if (MemoryType.into_place == memoryType) {
-                DynamicObject ext = memoryType.newExtDynamicObject().set(memory.getRaw());
+                DynamicObject ext = memoryType.newExtDynamicObject().setRaw(memory.getRaw());
                 ActivityBuilder activityBuilder = new ActivityBuilder();
                 activityBuilder.timestamp(memory.getTimestamp());
                 activityBuilder.uuid(memory.getUuid());

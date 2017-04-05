@@ -14,7 +14,7 @@ public enum MemoryType {
     /**
      * 新实体
      */
-    new_entity("新实体", Arrays.asList("new_entity", "entity", "e"), //
+    new_entity("新实体", Arrays.asList("new_entity", "entity"), //
             new DynamicObject().requiredField(new DynamicField().name("name")) //
                     .optionalField(new DynamicField().name("shortNames").shortName("short")) //
                     .optionalField(new DynamicField().name("properties").shortName("prop")) //
@@ -23,7 +23,7 @@ public enum MemoryType {
     /**
      * 新活动
      */
-    new_activity("新活动", Arrays.asList("new_activity", "act", "a"), //
+    new_activity("新活动", Arrays.asList("new_activity", "act"), //
             new DynamicObject().requiredField(new DynamicField().name("type")) //
                     .requiredField(new DynamicField().name("target")) //
                     .optionalField(new DynamicField().name("effect")) //
@@ -32,7 +32,7 @@ public enum MemoryType {
     /**
      * 结束活动
      */
-    over_activity("结束活动", Arrays.asList("over_activity", "over", "o"), //
+    over_activity("结束活动", Arrays.asList("over_activity", "over"), //
             new DynamicObject().requiredField(new DynamicField().name("index")) //
                     .optionalField(new DynamicField().name("sources").shortName("source")) //
     ),
@@ -51,6 +51,16 @@ public enum MemoryType {
             new DynamicObject().requiredField(new DynamicField().name("name")) //
                     .optionalField(new DynamicField().name("shortNames").shortName("short")) //
                     .optionalField(new DynamicField().name("properties").shortName("prop")) //
+                    .optionalField(new DynamicField().name("sources").shortName("source")) //
+    ),
+    /**
+     * 旧活动
+     */
+    old_activity("旧活动", Arrays.asList("old_activity", "old"), //
+            new DynamicObject().requiredField(new DynamicField().name("time")) //
+                    .requiredField(new DynamicField().name("type")) //
+                    .requiredField(new DynamicField().name("target")) //
+                    .optionalField(new DynamicField().name("effect")) //
                     .optionalField(new DynamicField().name("sources").shortName("source")) //
     );
 

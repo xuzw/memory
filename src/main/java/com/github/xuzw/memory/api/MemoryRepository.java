@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -47,12 +49,22 @@ public class MemoryRepository {
     public MemoryWrapper append(Memory memory) throws IOException {
         MemoryWrapper memoryWrapper = new MemoryWrapper(memory, memories.size());
         memories.add(memory);
+        _sort();
         String line = JSON.toJSONString(memory);
         StringBuffer sb = new StringBuffer();
         sb.append(JSON.toJSONString(_buildMetadataOfNextLine(line))).append(MemoryRepositoryFileFormat.line_separator);
         sb.append(line).append(MemoryRepositoryFileFormat.line_separator);
         writer.append(sb.toString());
         return memoryWrapper;
+    }
+
+    private void _sort() {
+        Collections.sort(memories, new Comparator<Memory>() {
+            @Override
+            public int compare(Memory o1, Memory o2) {
+                return (int) (o1.getTimestamp() - o2.getTimestamp());
+            }
+        });
     }
 
     private MetadataOfNextLine _buildMetadataOfNextLine(String line) {
@@ -65,6 +77,7 @@ public class MemoryRepository {
         while ((memory = _read()) != null) {
             memories.add(memory);
         }
+        _sort();
     }
 
     private Memory _read() throws IOException, MemoryRepositoryFileFormatException {
@@ -121,7 +134,7 @@ public class MemoryRepository {
         if (who == null) {
             return null;
         }
-        DynamicObject dynamicObject = MemoryType.who.newExtDynamicObject().set(who.getRaw());
+        DynamicObject dynamicObject = MemoryType.who.newExtDynamicObject().setRaw(who.getRaw());
         return new EntityBuilder().name(dynamicObject.get("name").getValue()).shortNames(dynamicObject.get("shortNames").getList()).build();
     }
 
@@ -130,7 +143,7 @@ public class MemoryRepository {
         for (Memory memory : memories) {
             MemoryType memoryType = MemoryType.parse(memory.getType());
             if (MemoryType.into_place == memoryType) {
-                DynamicObject ext = MemoryType.into_place.newExtDynamicObject().set(memory.getRaw());
+                DynamicObject ext = MemoryType.into_place.newExtDynamicObject().setRaw(memory.getRaw());
                 for (String source : ext.get("sources").getList()) {
                     if (getWhoEntity().hasName(source)) {
                         lastIntoPlace = ext;
@@ -145,7 +158,7 @@ public class MemoryRepository {
         for (Memory memory : memories) {
             MemoryType memoryType = MemoryType.parse(memory.getType());
             if (MemoryType.over_activity == memoryType) {
-                DynamicObject ext = MemoryType.over_activity.newExtDynamicObject().set(memory.getRaw());
+                DynamicObject ext = MemoryType.over_activity.newExtDynamicObject().setRaw(memory.getRaw());
                 if (ext.get("index").getInt() == index) {
                     return memory;
                 }
