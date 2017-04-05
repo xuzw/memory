@@ -16,5 +16,6 @@ public class Help {
         System.out.println("帮助: memory help");
         System.out.println("查看这是谁的记忆: memory who");
         System.out.println("设置这是谁的记忆: memory who <名称> [short <简称列表>] [prop <属性键值对>]");
+        System.out.println("版本: memory version");
     }
 }

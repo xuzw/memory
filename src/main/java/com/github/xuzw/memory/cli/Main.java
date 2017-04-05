@@ -12,6 +12,7 @@ import com.github.xuzw.memory.cli.cmd.Append;
 import com.github.xuzw.memory.cli.cmd.Help;
 import com.github.xuzw.memory.cli.cmd.OverActivity;
 import com.github.xuzw.memory.cli.cmd.Preview;
+import com.github.xuzw.memory.cli.cmd.Version;
 import com.github.xuzw.memory.cli.cmd.Who;
 import com.github.xuzw.memory.model.MemoryType;
 
@@ -51,6 +52,12 @@ public class Main {
         if (Who.class.getSimpleName().equalsIgnoreCase(firstArg)) {
             // 这是谁的记忆
             new Who().execute(argList, memoryRepository);
+            memoryRepository.close();
+            return;
+        }
+        if (Version.class.getSimpleName().equalsIgnoreCase(firstArg)) {
+            // 版本
+            new Version().execute();
             memoryRepository.close();
             return;
         }
