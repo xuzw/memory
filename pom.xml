@@ -30,6 +30,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.xuzw</groupId>
+            <artifactId>activity</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.10</version>
