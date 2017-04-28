@@ -15,7 +15,6 @@
     </properties>
 
     <build>
-        <finalName>memory-cli</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
