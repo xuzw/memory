@@ -6,7 +6,7 @@ package com.github.xuzw.memory.cli.cmd;
  */
 public class Version {
     public static final String cmd = "version";
-    private static final String version = "2017.04.05.1704";
+    private static final String version = "1.0.0.r201704281158";
 
     public void execute() {
         System.out.println(version);
